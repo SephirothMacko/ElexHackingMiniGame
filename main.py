@@ -36,9 +36,10 @@ def user_password_check(lista: list) -> bool:
             return False
     return True
 
+
 def validity_check(original: list, user: list) -> str:
     if len(original) != len(user):
-        return False
+        return "Nie udało się!"
     i = 0
     while i < len(original):
         if original[i] != int(user[i]):
@@ -114,7 +115,7 @@ def gui():
             event, values = window.read(timeout=100)
             if event == psg.WIN_CLOSED:
                 break
-            if event == "z" and hacking == False:
+            if event == "z" and hacking is False:
                 hacking = True
                 window.close()
             if event == "x":
