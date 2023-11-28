@@ -38,14 +38,30 @@ def user_password_check(lista: list) -> bool:
 
 
 def validity_check(original: list, user: list) -> str:
-    if len(original) != len(user):
-        return "Nie udało się!"
     i = 0
-    while i < len(original):
+    while i < len(user):
         if original[i] != int(user[i]):
             return "Nie udało się!"
         i += 1
     return "Wchodzę!"
+
+
+def extended_validity_check(original: list, user: list) -> tuple:
+    i = 0
+    green = []
+    yellow = []
+    red = []
+    while i < len(user):
+        digit = int(user[i])
+        if digit == original[i]:
+            green.append(digit)
+        else:
+            if digit in original:
+                yellow.append(digit)
+            else:
+                red.append(digit)
+        i += 1
+    return green, yellow, red
 
 
 def gui():
@@ -55,6 +71,7 @@ def gui():
     running = True
     hacking = False
     while running:
+        psg.theme("DarkTeal12")
         digits_text = [psg.Push(background_color="sky blue")]
         for i in range(0, 4):
             digits_text.append(psg.Input("*", justification="center", background_color="sky blue",
@@ -69,7 +86,6 @@ def gui():
                         psg.Text("-", justification="center", background_color="sky blue", font=("Arial", 13)))
         digits_text.append(psg.Push(background_color="sky blue"))
         button_size = (4, 2)
-        psg.theme("DarkTeal12")
         digits_frame = psg.Frame("", [
             [psg.VPush()],
             [psg.Push(), psg.Button("7", size=button_size, key="-7-"), psg.Button("8", size=button_size, key="-8-"),
@@ -95,7 +111,7 @@ def gui():
         ], size=(400, 200), background_color="sky blue")
         output_frame = psg.Frame("", [
             [psg.VPush()],
-            [],
+            [psg.Text(f"Try {attempts}/4", font=("Arial", 12), visible=hacking, key="-ATTEMPTS-")],
             [psg.Text("  X  ", text_color="red", font=("Arial", 12, "bold")), psg.Text("Exit"), psg.Text("    "),
              psg.Text("  Z  ", text_color="green", font=("Arial", 12, "bold"), visible=False if hacking else True),
              psg.Text("Hacking", visible=False if hacking else True)]
@@ -112,6 +128,7 @@ def gui():
 
         i = 0
         while True:
+            psg.theme("DarkTeal12")
             event, values = window.read(timeout=100)
             if event == psg.WIN_CLOSED:
                 break
@@ -131,7 +148,28 @@ def gui():
                 user_digits = list(values.values())
                 if user_password_check(user_digits):
                     if hacking:
-                        pass
+                        for digit in [f"{i}" for i in range(10)]:
+                            if window[f"-{digit}-"].ButtonColor[0] not in ["red", "yellow"]:
+                                window[f"-{digit}-"].update(button_color=("#fafafa", psg.theme_button_color_background()))
+                        green, yellow, red = extended_validity_check(digits, user_digits)
+                        if len(green) == 4:
+                            window.close()
+                            psg.popup("Wchodzę!")
+                            running = False
+                        else:
+                            for digit in green:
+                                window[f"-{digit}-"].update(button_color=("green", psg.theme_button_color_background()))
+                            for digit in yellow:
+                                window[f"-{digit}-"].update(button_color=("yellow", psg.theme_button_color_background()))
+                            for digit in red:
+                                window[f"-{digit}-"].update(button_color=("red", psg.theme_button_color_background()))
+                            attempts += 1
+                            window["-ATTEMPTS-"].update(f"Try {attempts}/4")
+
+                        if attempts > 4:
+                            window.close()
+                            psg.popup("Nie udało się!")
+                            running = False
                     else:
                         output_message = validity_check(digits, user_digits)
                         window.close()
