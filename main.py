@@ -6,8 +6,8 @@ def generate_digits() -> list:
     digits = []
     while len(digits) < 4:
         d = randint(0, 9)
-        if d not in digits:
-            digits.append(d)
+        #if d not in digits:
+        digits.append(d)
     return digits
 
 
