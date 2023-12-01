@@ -74,9 +74,9 @@ def gui():
         psg.theme("DarkTeal12")
         digits_text = [psg.Push(background_color="sky blue")]
         for i in range(0, 4):
-            digits_text.append(psg.Input("*", justification="center", background_color="sky blue",
-                                         font=("Arial", 18, "bold"), size=3, border_width=0, key=f"-DIGIT{i}-",
-                                         disabled=False))
+            digits_text.append(psg.Input("*", justification="center", font=("Arial", 18, "bold"),
+                                         size=3, border_width=0, key=f"-DIGIT{i}-", disabled=True,
+                                         disabled_readonly_background_color="sky blue"))
             if i < 3:
                 if hacking:
                     digits_text.append(psg.Text(f"{ineqs[i]}", justification="center", background_color="sky blue",
