@@ -41,15 +41,15 @@ def user_password_check(lista: list) -> bool:
     return True
 
 
-def validity_check(original: list, user: list) -> str:
+def validity_check(original: list, user: list) -> tuple:
     # Function to check validity with original code
     # returns result as string text in popup window
     i = 0
     while i < len(user):
         if original[i] != int(user[i]):
-            return "It's a fail!"
+            return True, "It's a fail!"
         i += 1
-    return "I'm in!"
+    return False, "I'm in!"
 
 
 def extended_validity_check(original: list, user: list) -> tuple:
@@ -219,10 +219,10 @@ def gui():
                     # Check a validity of codes in non-hacking mode, function returns message displayed on
                     # the graphical popup window and close program
                     else:
-                        output_message = validity_check(digits, user_digits)
-                        window.close()
+                        running, output_message = validity_check(digits, user_digits)
+                        if running is False:
+                            window.close()
                         psg.popup(output_message)
-                        running = False
 
         window.close()
 
